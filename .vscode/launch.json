@@ -1,0 +1,25 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "args": [
+                "--classes", "./model_data/labels/widerface.names",
+                "--video", "./resources/video/in/5.mp4",
+                "--weights", "./weights/yolov3-wider_16000.tf",
+                "--output_format", "MP4V",
+                "--database", "./resources/database/1",
+                "--output", "./resources/video/out/5.mp4",
+                "--num_classes", "1",
+                "--max_face_threshold", "0.3",
+            ]
+        }
+    ]
+}
