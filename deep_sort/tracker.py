@@ -37,7 +37,7 @@ class Tracker:
 
     """
 
-    def __init__(self, metric, max_iou_distance=0.7, max_age=30, n_init=3):
+    def __init__(self, metric, max_iou_distance=0.7, max_age=3, n_init=3): # 빠르게 객체를 지워주기 위해 max_age를 30에서 3으로 변경
         self.metric = metric
         self.max_iou_distance = max_iou_distance
         self.max_age = max_age
@@ -71,11 +71,17 @@ class Tracker:
             self._match(detections)
         
         # Update track set.
+        for i in face_db:
+            face_db[i]["used"] = False # 다 탐지 안된걸로 변경
+
         for track_idx, detection_idx in matches:
             self.tracks[track_idx].update(
                 self.kf, detections[detection_idx])
+                
+            self.tracks[track_idx].find_face_name(face_db, max_face_threshold)
+
         for track_idx in unmatched_tracks:
-            self.tracks[track_idx].mark_missed()
+            self.tracks[track_idx].mark_missed(face_db) # 못찾으면 face_db에서 지워준다
         for detection_idx in unmatched_detections:
             self._initiate_track(detections[detection_idx], face_db, max_face_threshold)
         self.tracks = [t for t in self.tracks if not t.is_deleted()]

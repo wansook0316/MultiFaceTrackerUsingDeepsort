@@ -92,7 +92,8 @@ def _nn_cosine_distance(x, y):
         smallest cosine distance to a sample in `x`.
 
     """
-    distances = _cosine_distance(x, y)
+    # distances = _cosine_distance(x, y) # 변화 준부분
+    distances = custom_cosine_similarity(x, y)
     return distances.min(axis=0)
 
 
@@ -175,3 +176,22 @@ class NearestNeighborDistanceMetric(object):
         for i, target in enumerate(targets):
             cost_matrix[i, :] = self._metric(self.samples[target], features)
         return cost_matrix
+
+def custom_cosine_similarity(a, b):
+
+#     if not data_is_normalized:
+#         a = np.asarray(a) / np.linalg.norm(a, axis=1, keepdims=True)
+#         b = np.asarray(b) / np.linalg.norm(b, axis=1, keepdims=True)
+#     return 1. - np.dot(a, b.T)
+#     [[]] [[]]
+    
+    aa = np.linalg.norm(a, axis=1, keepdims=True)
+    bb = np.linalg.norm(b, axis=1, keepdims=True)
+    norm_mat = np.dot(aa, bb.T)
+    return 1. - (np.dot(a, b.T) / norm_mat)
+
+
+    # a = np.matmul(np.transpose(source_representation), test_representation)
+    # b = np.sum(np.multiply(source_representation, source_representation))
+    # c = np.sum(np.multiply(test_representation, test_representation))
+    # return 1 - (a / (np.sqrt(b) * np.sqrt(c)))

@@ -12,13 +12,14 @@
             "console": "integratedTerminal",
             "args": [
                 "--classes", "./model_data/labels/widerface.names",
-                "--video", "./resources/video/in/5.mp4",
+                "--video", "./resources/video/in/T-ara.mov",
                 "--weights", "./weights/yolov3-wider_16000.tf",
                 "--output_format", "MP4V",
-                "--database", "./resources/database/1",
-                "--output", "./resources/video/out/5.mp4",
+                "--database", "./resources/database/T-ara",
+                "--output", "./resources/video/out/T-ara.mp4",
                 "--num_classes", "1",
-                "--max_face_threshold", "0.3",
+                "--max_face_threshold", "0.68",
+                "--eval", "./resources/gt/T-ara_pred.txt",
             ]
         }
     ]

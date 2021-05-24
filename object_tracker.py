@@ -7,7 +7,6 @@ from mtcnn import MTCNN
 import tensorflow as tf
 import numpy as np
 import cv2
-import tensorflow as tf
 import matplotlib.pyplot as plt
 from yolov3_tf2.models import (
     YoloV3, YoloV3Tiny
@@ -51,7 +50,84 @@ python object_tracker.py \
     --database ./resources/database/2 \
     --output ./resources/video/out/2.mp4 \
     --num_classes 1 \
-    --max_face_threshold 0.3
+    --max_face_threshold 0.6871912959056619
+
+python object_tracker.py \
+    --classes ./model_data/labels/widerface.names \
+    --video ./resources/video/in/T-ara.mov \
+    --weights ./weights/yolov3-wider_16000.tf \
+    --output_format MP4V \
+    --database ./resources/database/T-ara \
+    --output ./resources/video/out/T-ara.mp4 \
+    --num_classes 1 \
+    --max_face_threshold 0.6871912959056619 \
+    --eval ./resources/gt/T-ara_pred.txt
+
+python object_tracker.py \
+    --classes ./model_data/labels/widerface.names \
+    --video ./resources/video/in/BrunoMars.mp4 \
+    --weights ./weights/yolov3-wider_16000.tf \
+    --output_format MP4V \
+    --database ./resources/database/BrunoMars \
+    --output ./resources/video/out/BrunoMars.mp4 \
+    --num_classes 1 \
+    --max_face_threshold 0.6871912959056619 \
+    --eval ./resources/gt/BrunoMars_pred.txt
+
+python object_tracker.py \
+    --classes ./model_data/labels/widerface.names \
+    --video ./resources/video/in/Darling.mp4 \
+    --weights ./weights/yolov3-wider_16000.tf \
+    --output_format MP4V \
+    --database ./resources/database/Darling \
+    --output ./resources/video/out/Darling.mp4 \
+    --num_classes 1 \
+    --max_face_threshold 0.6871912959056619 \
+    --eval ./resources/gt/Darling_pred.txt
+
+python object_tracker.py \
+    --classes ./model_data/labels/widerface.names \
+    --video ./resources/video/in/GirlsAloud.mp4 \
+    --weights ./weights/yolov3-wider_16000.tf \
+    --output_format MP4V \
+    --database ./resources/database/GirlsAloud \
+    --output ./resources/video/out/GirlsAloud.mp4 \
+    --num_classes 1 \
+    --max_face_threshold 0.6871912959056619 \
+    --eval ./resources/gt/GirlsAloud_pred.txt
+
+python object_tracker.py \
+    --classes ./model_data/labels/widerface.names \
+    --video ./resources/video/in/HelloBubble.mp4 \
+    --weights ./weights/yolov3-wider_16000.tf \
+    --output_format MP4V \
+    --database ./resources/database/HelloBubble \
+    --output ./resources/video/out/HelloBubble.mp4 \
+    --num_classes 1 \
+    --max_face_threshold 0.6871912959056619 \
+    --eval ./resources/gt/HelloBubble_pred.txt
+
+python object_tracker.py \
+    --classes ./model_data/labels/widerface.names \
+    --video ./resources/video/in/Westlife.mp4 \
+    --weights ./weights/yolov3-wider_16000.tf \
+    --output_format MP4V \
+    --database ./resources/database/Westlife \
+    --output ./resources/video/out/Westlife.mp4 \
+    --num_classes 1 \
+    --max_face_threshold 0.6871912959056619 \
+    --eval ./resources/gt/Westlife_pred.txt
+
+python object_tracker.py \
+    --classes ./model_data/labels/widerface.names \
+    --video ./resources/video/in/Apink.mp4 \
+    --weights ./weights/yolov3-wider_16000.tf \
+    --output_format MP4V \
+    --database ./resources/database/Apink \
+    --output ./resources/video/out/Apink.mp4 \
+    --num_classes 1 \
+    --max_face_threshold 0.6871912959056619 \
+    --eval ./resources/gt/Apink_pred.txt
 """
 
 
@@ -67,17 +143,14 @@ flags.DEFINE_string('database', './resources/database/1',
 flags.DEFINE_string('output', './resources/video/out/1.mp4', 'path to output video')
 flags.DEFINE_string('output_format', 'MP4V', 'codec used in VideoWriter when saving video to file')
 flags.DEFINE_integer('num_classes', 1, 'number of classes in the model')
-flags.DEFINE_float('max_face_threshold', 0.5, 'face threshold')
+flags.DEFINE_float('max_face_threshold', 0.6871912959056619, 'face threshold')
+flags.DEFINE_string('eval', "./resources/gt/1_pred.txt", 'txt file path for evaluation')
 
 
 def main(_argv):
     # set present path
     home = os.getcwd()
-
     
-
-
-
     # Definition of the parameters
     max_cosine_distance = 0.5
     nn_budget = None
@@ -119,11 +192,13 @@ def main(_argv):
             if i.split(".")[1] != "jpg": continue
             id_path = os.path.join(name_path, i)
             img = cv2.imread(id_path)
-            img_in = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-            img_in = tf.expand_dims(img_in, 0)
-            img_in = transform_images(img_in, FLAGS.size)
-            boxes, scores, classes, nums = yolo.predict(img_in)
-            converted_boxes = convert_boxes(img, boxes[0], scores[0])
+            # img_in = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            # img_in = tf.expand_dims(img_in, 0)
+            # img_in = transform_images(img_in, FLAGS.size)
+            # boxes, scores, classes, nums = yolo.predict(img_in)
+            boxes = np.asarray([[0, 0, img.shape[0], img.shape[1]]])
+            scores = np.asarray([[1]])
+            converted_boxes = convert_boxes(img, boxes, scores)
             features = encoder(img, converted_boxes)
 
             if features.shape[0] == 0: continue
@@ -131,11 +206,8 @@ def main(_argv):
             for f in range(features.shape[0]):
                 name_db.append(features[f,:])
         name_db = np.asarray(name_db)
-        face_db[name] = name_db
-
+        face_db[name] = dict({"used": False, "db": name_db})
     
-    
-
 
     try:
         vid = cv2.VideoCapture(int(FLAGS.video))
@@ -152,10 +224,12 @@ def main(_argv):
         codec = cv2.VideoWriter_fourcc(*FLAGS.output_format)
         out = cv2.VideoWriter(FLAGS.output, codec, fps, (width, height))
         list_file = open('detection.txt', 'w')
-        frame_index = -1 
+        frame_index = -1
 
     fps = 0.0
     count = 0 
+
+    detection_list = []
 
     while True:
         _, img = vid.read()
@@ -216,6 +290,7 @@ def main(_argv):
         t6 = time.time()
         print(f'tracking time : {t6-t5}') 
         
+        frame_index = frame_index + 1
         for track in tracker.tracks:
             if not track.is_confirmed() or track.time_since_update > 1:
                 continue 
@@ -226,10 +301,13 @@ def main(_argv):
             color = [i * 255 for i in color]
             cv2.rectangle(img, (int(bbox[0]), int(bbox[1])), (int(bbox[2]), int(bbox[3])), color, 2)
             cv2.rectangle(img, (int(bbox[0]), int(bbox[1]-30)), (int(bbox[0])+(len(class_name)+len(str(track.track_id)))*17, int(bbox[1])), color, -1)
-            cv2.putText(img, class_name + face_name + "-" + str(track.track_id),(int(bbox[0]), int(bbox[1]-10)),0, 0.75, (255,255,255),2)
+            # cv2.putText(img, class_name + face_name + "-" + str(track.track_id),(int(bbox[0]), int(bbox[1]-10)),0, 0.75, (255,255,255),2)
+            cv2.putText(img, class_name + "-" + face_name, (int(bbox[0]), int(bbox[1]-10)),0, 0.75, (255,255,255),2)
             # cv2.putText(img, class_name + "-" + str(track.track_id),(int(bbox[0]), int(bbox[1]-10)),0, 0.75, (255,255,255),2)
-            print(class_name + "-" + str(track.track_id))
+            # print(class_name + "-" + str(track.track_id))
 
+            if face_name != "":
+                detection_list.append(dict({"frame_no": str(frame_index), "id": str(face_name), "x": str(int(bbox[0])), "y": str(int(bbox[1])), "width": str(int(bbox[2])-int(bbox[0])), "height": str(int(bbox[3])-int(bbox[1]))}))
         #######
         fps  = ( fps + (1./(time.time()-t1)) ) / 2
         # img = draw_outputs(img, (boxes, scores, classes, nums), class_names)
@@ -239,17 +317,27 @@ def main(_argv):
                           cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (20, 20, 255), 2)
         if FLAGS.output:
             out.write(img)
-            frame_index = frame_index + 1
-            list_file.write(str(frame_index)+' ')
-            if len(converted_boxes) != 0:
-                for i in range(0,len(converted_boxes)):
-                    list_file.write(str(converted_boxes[i][0]) + ' '+str(converted_boxes[i][1]) + ' '+str(converted_boxes[i][2]) + ' '+str(converted_boxes[i][3]) + ' ')
-            list_file.write('\n')
+            # frame_index = frame_index + 1
+            # list_file.write(str(frame_index)+' ')
+            # if len(converted_boxes) != 0:
+            #     for i in range(0,len(converted_boxes)):
+            #         list_file.write(str(converted_boxes[i][0]) + ' '+str(converted_boxes[i][1]) + ' '+str(converted_boxes[i][2]) + ' '+str(converted_boxes[i][3]) + ' ')
+            # list_file.write('\n')
         cv2.imshow('output', img)
         if cv2.waitKey(1) == ord('q'):
             break
 
     cv2.destroyAllWindows()
+
+    
+    frame_list = sorted(detection_list, key= lambda x: (int(x["frame_no"]), int(x["id"])))
+    # pprint.pprint(frame_list)
+
+    f = open(FLAGS.eval, "w")
+    for a in frame_list:
+        f.write(a["frame_no"] + " " + a["id"] + " " + a["x"] + " " + a["y"] + " " + a["width"] + " " + a["height"] + "\n")
+    # 파일 닫기
+    f.close()
 
 
 if __name__ == '__main__':

@@ -1,14 +1,25 @@
 # vim: expandtab:ts=4:sw=4
-from .nn_matching import _cosine_distance
+from .nn_matching import _cosine_distance, custom_cosine_similarity
 import statistics as st
 import numpy as np
+import time
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+from deepface.commons import functions, distance as dst
 
 def find_face(features, face_db, max_face_threshold):
     face_score = dict()
     for face in face_db:
+        if face_db[face]["used"]: 
+            face_score[face] = 1
+            continue
         cos_harmonic = []
-        cos_mat = _cosine_distance(features, face_db[face])
+        # cos_mat = _cosine_distance(features, face_db[face]["db"], data_is_normalized=True)
+        cos_mat = custom_cosine_similarity(features, face_db[face]["db"])
+        # print(cos_mat)
 
+        # time.sleep(7)
 
         # for f in face_db[face]:
         #     cos_harmonic.append(_nn_cosine_distance(feature, f))
@@ -16,14 +27,19 @@ def find_face(features, face_db, max_face_threshold):
         # cos_harmonic = np.mean(cos_mat.flatten())
         # face_score[face] = cos_harmonic
 
+        # distance = dst.findCosineDistance(features[0], face_db[face]["db"][0])
+        # print(distance)
+
         face_score[face] = cos_mat.min(axis=1)
-        print(face_score)
+        # print(face_score)
     ans_face = min(face_score,key=face_score.get)
-    print(ans_face, face_score[ans_face])
-    import time
-    time.sleep(5)
+    
+    # print(ans_face, face_score)
+    
+    # time.sleep(5)
 
     if face_score[ans_face] < max_face_threshold:
+        face_db[ans_face]["used"] = True
         return ans_face
     else:
         return ""
@@ -206,12 +222,16 @@ class Track:
         if self.state == TrackState.Tentative and self.hits >= self._n_init:
             self.state = TrackState.Confirmed
 
-    def mark_missed(self):
+    def mark_missed(self, face_db):
         """Mark this track as missed (no association at the current time step).
         """
         if self.state == TrackState.Tentative:
+            if self.face_name != "":
+                face_db[self.face_name]["used"] = False
             self.state = TrackState.Deleted
         elif self.time_since_update > self._max_age:
+            if self.face_name != "":
+                face_db[self.face_name]["used"] = False
             self.state = TrackState.Deleted
 
     def is_tentative(self):
@@ -226,3 +246,28 @@ class Track:
     def is_deleted(self):
         """Returns True if this track is dead and should be deleted."""
         return self.state == TrackState.Deleted
+    
+    def find_face_name(self, face_db, max_face_threshold):
+        face_score = dict()
+        for face in face_db:
+            if face_db[face]["used"]: 
+                face_score[face] = 1
+                continue
+            cos_mat = custom_cosine_similarity(self.features, face_db[face]["db"])
+            # print(cos_mat)
+
+            # time.sleep(7)
+
+            face_score[face] = cos_mat.min(axis=1).min(axis=0)
+            # print(face_score)
+        ans_face = min(face_score,key=face_score.get)
+        
+        # print(ans_face, face_score)
+        
+        # time.sleep(5)
+
+        if face_score[ans_face] < max_face_threshold:
+            face_db[ans_face]["used"] = True
+            self.face_name =  ans_face
+        else:
+            self.face_name = ""

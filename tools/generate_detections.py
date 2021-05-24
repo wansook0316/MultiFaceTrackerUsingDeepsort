@@ -130,12 +130,12 @@ class ImageEncoder(object):
 
         # 추가
         out = self.session.predict(data_x)
-
+        
         # _run_in_batches(
         #     lambda x: self.session.run(self.output_var, feed_dict=x),
         #     {self.input_var: data_x}, out, batch_size)
-        t2 = time.time()
-        print("patch inference time : ", t2-t1)
+        # t2 = time.time()
+        # print("patch inference time : ", t2-t1)
         return out
 
 

@@ -19,9 +19,9 @@ def loadModel(model_path):
 	arcface_model = keras.layers.Flatten()(arcface_model)
 	arcface_model = keras.layers.Dense(512, activation=None, use_bias=True, kernel_initializer="glorot_normal")(arcface_model)
 	embedding = keras.layers.BatchNormalization(momentum=0.9, epsilon=2e-5, name="embedding", scale=True)(arcface_model)
-	embedding = tensorflow.reshape(embedding, [-1, 512, 1])
-	embedding = keras.layers.MaxPooling1D(pool_size=4, strides=4, padding="valid")(embedding)
-	embedding = keras.layers.Flatten()(embedding)
+	# embedding = tensorflow.reshape(embedding, [-1, 512, 1])
+	# embedding = keras.layers.MaxPooling1D(pool_size=4, strides=4, padding="valid")(embedding)
+	# embedding = keras.layers.Flatten()(embedding)
 	model = keras.models.Model(inputs, embedding, name=base_model.name)
 	
 	#---------------------------------------
