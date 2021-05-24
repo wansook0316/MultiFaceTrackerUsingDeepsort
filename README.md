@@ -189,10 +189,10 @@ python evaluation.py \
 
 # Reference
 
-[deepface](https://github.com/serengil/deepface)
-[Deep SORT](https://github.com/nwojke/deep_sort)
-[YoloV3 Implemented in TensorFlow 2.0](https://github.com/zzh8829/yolov3-tf2)
-[YOLOFace](https://github.com/sthanhng/yoloface)
-[Tracking Persons-of-Interests via Adaptive Discriminative Features(ECCV 2016)](https://sites.google.com/site/shunzhang876/eccv16_facetracking/)
-[Simple Online and Realtime Tracking with a Deep Association Metric(IEEE 2016)](https://arxiv.org/abs/1703.07402)
-[ArcFace: Additive Angular Margin Loss for Deep Face Recognition](https://arxiv.org/abs/1801.07698)
+[deepface](https://github.com/serengil/deepface)  
+[Deep SORT](https://github.com/nwojke/deep_sort)  
+[YoloV3 Implemented in TensorFlow 2.0](https://github.com/zzh8829/yolov3-tf2)  
+[YOLOFace](https://github.com/sthanhng/yoloface)  
+[Tracking Persons-of-Interests via Adaptive Discriminative Features(ECCV 2016)](https://sites.google.com/site/shunzhang876/eccv16_facetracking/)  
+[Simple Online and Realtime Tracking with a Deep Association Metric(IEEE 2016)](https://arxiv.org/abs/1703.07402)  
+[ArcFace: Additive Angular Margin Loss for Deep Face Recognition](https://arxiv.org/abs/1801.07698)  
