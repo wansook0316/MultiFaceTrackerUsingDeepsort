@@ -6,10 +6,14 @@ Yolov3와 Arcface 를 통한 얼굴 탐지 및 feature extration을 통해 원�
 ## 동작 영상
 <iframe width="560" height="315" src="https://www.youtube.com/embed/cCJJJ5JTQx0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=cCJJJ5JTQx0
+" target="_blank"><img src="http://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg" 
+alt="project video" width="240" height="180" border="10" /></a>
+
 ## 프로젝트 시작 배경
 
-1.	사람의 얼굴을 지속적으로 추적하는 것은 미래 사회에서 상당히 중요한 기술로 자리매김할 것이다. 상점에 있는 전광판, 키오스크 등에 장치할 경우, 디스플레이를 쳐다보고 있는 사람 수, 보는 시간 등을 수치적으로 산출할 수 있다. 이러한 방법은 광고주가 광고 캠페인을 최적화하는데 사용할 수 있다. 
-2.	또한 실내 환경의 상태를 추적하는데도 사용이 가능하다. 공장/사무실과 같은 공간에서 현재 근무하고 있는 사람의 수를 측정하고, 각각의 사람을 인지할 수 있다면, 출근 명부와 같은 단순한 작업을 자동화할 수 있다. 또한 자동차와 같은 실내 공간에서 탑승객의 상태를 인지하는데 사용할 수 있다. 특히 운전자가 어떤 상태로 주행을 하고 있는지 알 수 있다면, 이는 주행의 안전을 보조하는 하나의 장치로 사용이 가능하다.
+1.	사람의 얼굴을 지속적으로 추적하는 것은 미래 사회에서 상당히 중요한 기술로 자리매김할 것입니다. 상점에 있는 전광판, 키오스크 등에 장치할 경우, 디스플레이를 쳐다보고 있는 사람 수, 보는 시간 등을 수치적으로 산출할 수 있습니다. 이러한 방법은 광고주가 광고 캠페인을 최적화하는데 사용할 수 있습니다. 
+2.	또한 실내 환경의 상태를 추적하는데도 사용이 가능합니다. 공장/사무실과 같은 공간에서 현재 근무하고 있는 사람의 수를 측정하고, 각각의 사람을 인지할 수 있다면, 출근 명부와 같은 단순한 작업을 자동화할 수 있습니다. 또한 자동차와 같은 실내 공간에서 탑승객의 상태를 인지하는데 사용할 수 있습니다. 특히 운전자가 어떤 상태로 주행을 하고 있는지 알 수 있다면, 이는 주행의 안전을 보조하는 하나의 장치로 사용이 가능할 것으로 보입니다.
 
 ## Architecture
 
@@ -18,25 +22,25 @@ Yolov3와 Arcface 를 통한 얼굴 탐지 및 feature extration을 통해 원�
 ![image](https://user-images.githubusercontent.com/37871541/119678550-94670880-be7a-11eb-9c49-7add81dc4a92.png)
 
 
-변경 사항은 다음과 같다.
+변경 사항은 다음과 같습니다.
 
-1. Deep sort의 pedestrian appearance extractor를 Arcface를 통한 feature extraction을 통해 얼굴에 최적화된 모델로 변경한다.
-2. 실시간 tracking을 위해 얼굴 탐지 모델을 WIDER FACE 데이터셋을 통해 YOLOv3모델을 학습한다.
-3. 학습된 모델을 통해 얼굴을 탐지하고 기존의 deepsort 를 변경하여 실시간 tracking이 가능하도록 한다.
-4. 저장된 사람의 얼굴을 feature extraction하여 face db에 저장한다.
-5. track객체가 생성될 때 해당 db를 근간으로 가장 높은 face id를 매칭한다. 이 때 cosine similarity를 사용한다.
-6. 이미 track이 된 객체에 대해서도 3의 방법을 통해 지속적인 id 갱신을 시도한다.
+1. Deep sort의 pedestrian appearance extractor를 Arcface를 통한 feature extraction을 통해 얼굴에 최적화된 모델로 변경
+2. 실시간 tracking을 위해 얼굴 탐지 모델을 WIDER FACE 데이터셋을 통해 YOLOv3모델을 학습
+3. 학습된 모델을 통해 얼굴을 탐지하고 기존의 deepsort 를 변경하여 실시간 tracking이 가능하도록 수정
+4. 저장된 사람의 얼굴을 feature extraction하여 face db에 저장
+5. track객체가 생성될 때 해당 db를 근간으로 가장 높은 face id를 매칭 이 때 cosine similarity를 사용한다.
+6. 이미 track이 된 객체에 대해서도 3의 방법을 통해 지속적으로 id를 갱신
 7. track객체에 이전에 탐색된 얼굴 feature정보를 저장하여 인식률을 높힌다.
-8. 이미 face db에서 매칭된 사람의 경우 id가 중복되지 않도록 한다.
+8. 이미 face db에서 매칭된 사람의 경우 id가 중복되지 않도록 소스코드 추가
 
 ## Result
 
-Recall과 precision같은 경우 기존 Tracking 연구보다 높은 수준을 보였으나, MOTA (추적 정확도) 측면에서 나쁜 점수가 나왔다. 이는 각각의 프레임에서 추가적인 얼굴 탐지 때문에 잘못된 사람에 대해 id 매칭이 되어 FN가 크게 오르는 결과를 만들었다. 아래는 [기존 논문](https://sites.google.com/site/shunzhang876/eccv16_facetracking/)의 결과이다.
+Recall과 precision같은 경우 기존 Tracking 연구보다 높은 수준을 보였으나, MOTA (추적 정확도) 측면에서 나쁜 점수가 나왔습니다. 이는 각각의 프레임에서 추가적인 얼굴 탐지 때문에 잘못된 사람에 대해 id 매칭이 되어 FN가 크게 오르는 결과를 만든 것으로 보입니다. 아래는 [기존 논문](https://sites.google.com/site/shunzhang876/eccv16_facetracking/)의 결과입니다.
 
 ![image](https://user-images.githubusercontent.com/37871541/119105685-89663f80-ba58-11eb-89fe-6c29e5f9d4c6.png)
 
 
-해당 논문에서 사용한 music dataset에 대해 제작한 모델의 성능을 검증하였다.
+해당 논문에서 사용한 music dataset에 대해 제작한 모델의 성능을 검증하였습니다.
 
 ### T-ara
 
@@ -91,7 +95,7 @@ Recall과 precision같은 경우 기존 Tracking 연구보다 높은 수준을 �
 - GPU : RTX 3080
 - CPU : AMD Ryzen 7 5800X 8-Core Processor
 
-추가적으로 사용한 라이브러리는 아래 파일을 통해 설치할 수 있다.
+추가적으로 사용한 라이브러리는 아래 파일을 통해 설치할 수 있습니다.
 
 ```bash
 $ pip install requirement.txt
