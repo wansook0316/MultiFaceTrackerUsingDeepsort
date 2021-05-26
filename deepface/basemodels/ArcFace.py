@@ -34,10 +34,10 @@ def loadModel(model_path):
 	# print(output)
 	
 	
-	if os.path.isfile(model_path) != True:
+	# if os.path.isfile(model_path) != True:
 
-		print(file_name," will be downloaded to ",model_path)
-		gdown.download(url, model_path, quiet=False)	
+	# 	print(file_name," will be downloaded to ",model_path)
+	# 	gdown.download(url, model_path, quiet=False)	
 	
 	#---------------------------------------
 	
@@ -45,7 +45,7 @@ def loadModel(model_path):
 		model.load_weights(model_path)
 	except:
 		print("pre-trained weights could not be loaded.")
-		print("You might try to download it from the url ", url," and copy to ",output," manually")
+		# print("You might try to download it from the url ", url," and copy to ",output," manually")
 	
 	return model
 	
