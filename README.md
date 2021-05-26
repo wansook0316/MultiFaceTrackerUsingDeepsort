@@ -4,11 +4,11 @@
 Yolov3와 Arcface 를 통한 얼굴 탐지 및 feature extration을 통해 원하는 사진을 기반으로 영상에서 인물을 찾아 추적하는 모델을 제작하였습니다.
 
 ## 동작 영상
-<iframe width="560" height="315" src="https://www.youtube.com/embed/cCJJJ5JTQx0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=cCJJJ5JTQx0
-" target="_blank"><img src="http://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg" 
-alt="project video" width="240" height="180" border="10" /></a>
+![2 (online-video-cutter com) (1)](https://user-images.githubusercontent.com/37871541/119682508-e6f5f400-be7d-11eb-9623-dadf082302e7.gif)
+![myface (online-video-cutter com)](https://user-images.githubusercontent.com/37871541/119682513-e8272100-be7d-11eb-9134-2e86dd10ce36.gif)
+
+![BrunoMars (online-video-cutter com) (1) (1)](https://user-images.githubusercontent.com/37871541/119684145-37ba1c80-be7f-11eb-9e6d-c708e96cc737.gif)
 
 ## 프로젝트 시작 배경
 
