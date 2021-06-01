@@ -300,12 +300,13 @@ def main(_argv):
             color = colors[int(track.track_id) % len(colors)]
             color = [i * 255 for i in color]
             cv2.rectangle(img, (int(bbox[0]), int(bbox[1])), (int(bbox[2]), int(bbox[3])), color, 2)
-            cv2.rectangle(img, (int(bbox[0]), int(bbox[1]-30)), (int(bbox[0])+(len(class_name)+len(str(track.track_id)))*17, int(bbox[1])), color, -1)
+            cv2.rectangle(img, (int(bbox[0]), int(bbox[1]-30)), (int(bbox[0])+(len(class_name)+len(str(track.track_id))+len(str(face_name)))*17, int(bbox[1])), color, -1)
             # cv2.putText(img, class_name + face_name + "-" + str(track.track_id),(int(bbox[0]), int(bbox[1]-10)),0, 0.75, (255,255,255),2)
-            cv2.putText(img, class_name + "-" + face_name, (int(bbox[0]), int(bbox[1]-10)),0, 0.75, (255,255,255),2)
+            cv2.putText(img, class_name + "-" + str(track.track_id) + "-" + face_name, (int(bbox[0]), int(bbox[1]-10)),0, 0.75, (255,255,255),2)
             # cv2.putText(img, class_name + "-" + str(track.track_id),(int(bbox[0]), int(bbox[1]-10)),0, 0.75, (255,255,255),2)
             # print(class_name + "-" + str(track.track_id))
 
+            # detection_list.append(dict({"frame_no": str(frame_index), "id": str(track.track_id), "x": str(int(bbox[0])), "y": str(int(bbox[1])), "width": str(int(bbox[2])-int(bbox[0])), "height": str(int(bbox[3])-int(bbox[1]))}))
             if face_name != "":
                 detection_list.append(dict({"frame_no": str(frame_index), "id": str(face_name), "x": str(int(bbox[0])), "y": str(int(bbox[1])), "width": str(int(bbox[2])-int(bbox[0])), "height": str(int(bbox[3])-int(bbox[1]))}))
         #######

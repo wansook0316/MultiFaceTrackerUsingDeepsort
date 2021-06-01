@@ -32,13 +32,14 @@ def find_face(features, face_db, max_face_threshold):
 
         face_score[face] = cos_mat.min(axis=1)
         # print(face_score)
+    print(face_score)
     ans_face = min(face_score,key=face_score.get)
     
     # print(ans_face, face_score)
     
     # time.sleep(5)
 
-    if face_score[ans_face] < max_face_threshold:
+    if 0.15 < face_score[ans_face] < max_face_threshold:
         face_db[ans_face]["used"] = True
         return ans_face
     else:

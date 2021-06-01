@@ -95,7 +95,7 @@ def main(args):
                 object_dict[id] = 1
                 file_name = object_dict[id]
 
-            if object_dict[id] % 80 != 0:
+            if object_dict[id] % 10 != 0:
                 continue
 
             # target_aspect = float(img.shape[1]) / img.shape[0]
