@@ -1,4 +1,4 @@
-# n = 20
+# n = 20을 기반으로 얼굴 크로핑
 ## T ara
     IDF1    IDP    IDR  Rcll  Prcn GT MT PT ML   FP   FN  IDs   FM  MOTA  MOTP  IDt IDa IDm
 0  61.3%  67.4%  56.6% 76.6% 90.4%  6  3  3  0 1176 3405 3131  516 46.9% 0.285 2563   3   3
@@ -77,7 +77,7 @@
 0  71.9%  74.9%  69.3% 80.5% 86.8%  6  3  3  0 889 1420 691  299 58.8% 0.333 377   4   4
 1 103.8% 100.0% 100.0% 80.5% 86.8%  6  3  3  0 889 1420 691  299 58.8% 0.333 377   4   4
 
-# only using id
+# only using id, 그냥 deep sort처럼 id로 뺀 경우
 
 ## T ara
     IDF1    IDP    IDR  Rcll  Prcn GT MT PT ML   FP   FN IDs   FM  MOTA  MOTP IDt IDa IDm
@@ -116,3 +116,43 @@
     IDF1    IDP    IDR  Rcll  Prcn GT MT PT ML  FP   FN IDs   FM  MOTA  MOTP IDt IDa IDm
 0   6.4%   6.6%   6.2% 81.9% 86.5%  6  5  1  0 934 1314 223  278 66.0% 0.332  20 185   0
 1 102.7% 100.0% 100.0% 81.9% 86.5%  6  5  1  0 934 1314 223  278 66.0% 0.332  20 185   0
+
+
+
+# face id, track id말고 face id로 처음에 매칭될 때만 배정하여 추출한 결과
+
+
+## T ara
+    IDF1    IDP    IDR  Rcll  Prcn GT MT PT ML   FP   FN IDs   FM  MOTA  MOTP IDt IDa IDm
+0  53.2%  66.5%  49.1% 76.6% 90.4%  6  3  3  0 1178 3402 209  515 67.0% 0.285 241   1   1
+1 108.3% 100.0% 100.0% 76.6% 90.4%  6  3  3  0 1178 3402 209  515 67.0% 0.285 241   1   1
+
+## GirlsAloud
+    IDF1    IDP    IDR  Rcll  Prcn GT MT PT ML   FP   FN IDs    FM  MOTA  MOTP IDt IDa IDm
+0  51.4%  60.9%  48.5% 75.9% 85.5%  5  1  4  0 2116 3951 341  1021 60.9% 0.353 466   1   1
+1 105.9% 100.0% 100.0% 75.9% 85.5%  5  1  4  0 2116 3951 341  1021 60.9% 0.353 466   1   1
+
+## Darling
+    IDF1    IDP    IDR  Rcll  Prcn GT MT PT ML   FP   FN IDs   FM  MOTA  MOTP IDt IDa IDm
+0  53.2%  57.4%  53.0% 80.7% 81.3%  8  4  4  0 1772 1835 292  704 59.1% 0.343 278   2   2
+1 100.3% 100.0% 100.0% 80.7% 81.3%  8  4  4  0 1772 1835 292  704 59.1% 0.343 278   2   2
+
+## Westlife
+   IDF1    IDP    IDR  Rcll  Prcn GT MT PT ML   FP   FN IDs   FM  MOTA  MOTP IDt IDa IDm
+0 49.7%  59.5%  56.8% 90.6% 70.5%  4  4  0  0 4309 1065  70  446 52.2% 0.353 118   0   0
+1 87.5% 100.0% 100.0% 90.6% 70.5%  4  4  0  0 4309 1065  70  446 52.2% 0.353 118   0   0
+ 
+## brunomars
+   IDF1    IDP    IDR  Rcll  Prcn GT MT PT ML   FP   FN IDs   FM  MOTA  MOTP IDt IDa IDm
+0 47.1%  51.8%  47.8% 75.4% 73.3% 11  5  6  0 4584 4110 320  970 46.0% 0.319 254   7   7
+1 98.6% 100.0% 100.0% 75.4% 73.3% 11  5  6  0 4584 4110 320  970 46.0% 0.319 254   7   7
+
+## Hellobubble
+     IDF1    IDP    IDR  Rcll  Prcn GT MT PT ML  FP   FN IDs   FM  MOTA  MOTP IDt IDa IDm
+0  51.8%  58.7%  48.9% 75.7% 85.1%  4  0  4  0 694 1270  91  273 60.7% 0.314  77   3   3
+1 105.8% 100.0% 100.0% 75.7% 85.1%  4  0  4  0 694 1270  91  273 60.7% 0.314  77   3   3
+
+## Apink
+    IDF1    IDP    IDR  Rcll  Prcn GT MT PT ML  FP   FN IDs   FM  MOTA  MOTP IDt IDa IDm
+0  61.8%  65.9%  59.6% 80.6% 86.8%  6  3  3  0 889 1409  87  292 67.2% 0.333  69   1   1
+1 103.7% 100.0% 100.0% 80.6% 86.8%  6  3  3  0 889 1409  87  292 67.2% 0.333  69   1   1

@@ -39,7 +39,7 @@ def find_face(features, face_db, max_face_threshold):
     
     # time.sleep(5)
 
-    if 0.15 < face_score[ans_face] < max_face_threshold:
+    if face_score[ans_face] < max_face_threshold:
         face_db[ans_face]["used"] = True
         return ans_face
     else:

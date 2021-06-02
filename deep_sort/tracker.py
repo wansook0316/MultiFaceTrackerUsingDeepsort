@@ -77,8 +77,9 @@ class Tracker:
         for track_idx, detection_idx in matches:
             self.tracks[track_idx].update(
                 self.kf, detections[detection_idx])
-                
-            self.tracks[track_idx].find_face_name(face_db, max_face_threshold)
+            
+            if self.tracks[track_idx].get_face_name() == "":
+                self.tracks[track_idx].find_face_name(face_db, max_face_threshold)
 
         for track_idx in unmatched_tracks:
             self.tracks[track_idx].mark_missed(face_db) # 못찾으면 face_db에서 지워준다
