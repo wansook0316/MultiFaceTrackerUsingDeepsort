@@ -36,8 +36,10 @@ Yolov3와 Arcface 를 통한 얼굴 탐지 및 feature extration을 통해 원�
     * Yolov3 사용 : 문제를 종합해본 결과, Detector의 성능이 떨어지는 것이 가장 중요한 문제라고 판단하였다. 이에 Yolov3를 사용하여 얼굴에 국한된 훈련 모델을 제작하였다. 학습 데이터로는 WIDER FACE(A Face Detection Benchmark)를 사용하였다. WIDER FACE 데이터 셋은 얼굴 검출 벤치마크 데이터 셋으로서, 총 32,203개의 이미지를 가지고 있으며, 약 40만개의 얼굴 label로 이루어져 있다. 또한 이 label은 다양한 스케일을 반영하고 있기 때문에, 영상에서 발생하는 다양한 Scale을 반영하기 충분하다고 판단했다.
     * Arcface를 사용한 Feature Descriptor 변경 : 기존 Deep sort는 보행자를 기반으로 해서, Track matching을 진행했기 때문에, FeatureDescriptor의 Input shape이 2:1 비율로 제작되어 있었다. 하지만 실제로 Face Detection의 결과는 사람의 얼굴이기 때문에 정사각형에 가깝다. 또한 기존의 Feature Descriptor의 경우 보행자 이미지를 기반으로 훈련하여 현재 과업에 맞지 않아 실제 테스트를 진행했을 때, id 매칭에 있어서 실패하는 모습을 보였다. 그렇기 때문에 이 부분을 변경하여 실험을 진행하였다. 
 3.  Face Matching 알고리즘 제작
-    * FACE DB 제작 : 영상속에 등장하는 사람을 인식할 수 있도록 사전에 라벨링된 사람의 이미지를 바탕으로 Feature를 추출하였다. 이 때, Feature 추출기로 얼굴에 최적화된 Arcface 추출기를 사용하였으며, 해당 데이터는 hash 자료형을 기반으로 메모리에 저장되어 있다.
-    ![image](https://user-images.githubusercontent.com/37871541/120924080-dca0e900-c70c-11eb-8df1-e5602ebae036.png)
+    * FACE DB 제작 : 영상속에 등장하는 사람을 인식할 수 있도록 사전에 라벨링된 사람의 이미지를 바탕으로 Feature를 추출하였다. 이 때, Feature 추출기로 얼굴에 최적화된 Arcface 추출기를 사용하였으며, 해당 데이터는 hash 자료형을 기반으로 메모리에 저장되어 있다.![image](https://user-images.githubusercontent.com/37871541/120926027-2215e400-c716-11eb-929b-3a21f8b92eb7.png)
+
+    
+
     * FACE Matching Algorithm 제작 : 위에서 제작된 Face DB를 바탕으로 런타임에 지속적으로 탐지된 얼굴에 대해 인식을 시도한다. 기존의 Track 객체에는 이전 프레임동안 추적해온 얼굴에 대한 Feature 정보들이 저장되어 있다. 이를 기반으로 Face DB에 있는 사람 얼굴 정보와 Cosine similarity를 통해 가장 작은 값을 해당 Track 객체의 얼굴이라고 판단한다. 이 때, 특정 Threshold(0.68)보다 큰 값일 경우 잘못 탐지했다고 판단하고, id를 배정하지 않는다. 해당 Threshold는 Arcface의 Cosine similarity threshold 실험값을 반영하였다.
     ![image](https://user-images.githubusercontent.com/37871541/120924132-1a9e0d00-c70d-11eb-8b20-02512f01ef77.png)
 
