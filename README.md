@@ -3,86 +3,68 @@
 
 Yolov3와 Arcface 를 통한 얼굴 탐지 및 feature extration을 통해 원하는 사진을 기반으로 영상에서 인물을 찾아 추적하는 모델을 제작하였습니다.
 
-## 동작 영상
+![image](https://user-images.githubusercontent.com/37871541/120924151-373a4500-c70d-11eb-903f-5b2baff60cfb.png)
+
+
+# 동작 영상
 
 ![2 (online-video-cutter com) (1)](https://user-images.githubusercontent.com/37871541/119682508-e6f5f400-be7d-11eb-9623-dadf082302e7.gif)
 ![myface (online-video-cutter com)](https://user-images.githubusercontent.com/37871541/119682513-e8272100-be7d-11eb-9134-2e86dd10ce36.gif)
 
 ![BrunoMars (online-video-cutter com) (1) (1)](https://user-images.githubusercontent.com/37871541/119684145-37ba1c80-be7f-11eb-9e6d-c708e96cc737.gif)
 
-## 프로젝트 시작 배경
+# 프로젝트 시작 배경
 
 1.	사람의 얼굴을 지속적으로 추적하는 것은 미래 사회에서 상당히 중요한 기술로 자리매김할 것입니다. 상점에 있는 전광판, 키오스크 등에 장치할 경우, 디스플레이를 쳐다보고 있는 사람 수, 보는 시간 등을 수치적으로 산출할 수 있습니다. 이러한 방법은 광고주가 광고 캠페인을 최적화하는데 사용할 수 있습니다. 
 2.	또한 실내 환경의 상태를 추적하는데도 사용이 가능합니다. 공장/사무실과 같은 공간에서 현재 근무하고 있는 사람의 수를 측정하고, 각각의 사람을 인지할 수 있다면, 출근 명부와 같은 단순한 작업을 자동화할 수 있습니다. 또한 자동차와 같은 실내 공간에서 탑승객의 상태를 인지하는데 사용할 수 있습니다. 특히 운전자가 어떤 상태로 주행을 하고 있는지 알 수 있다면, 이는 주행의 안전을 보조하는 하나의 장치로 사용이 가능할 것으로 보입니다.
 
-## Architecture
+# 주요 내용
+1. Yolov3 구조를 기반으로WIDERFACE dataset을 사용하여 학습한다.
+2. 제작된 네트워크를 기반으로 실시간 Detection알고리즘을 제작한다.
+3. Deepsort 구조를 개선하여, 얼굴 추적에 맞도록 Feature Descriptor를 Arcface로 대체하여 얼굴에 맞는 feature로 추적 알고리즘을 제작한다. 이 때 임의의 사람에 대해서 고유한 id를 주어 추적하도록 한다.
+4. 정적인 사람 이미지에 대해서 Feature 정보를 추출하고, 이를 기반으로 영상에 존재하는 사람을 추적하는 알고리즘을 개발한다. 알고있는 사람의 얼굴 정보가 주어진다면, 해당 사람을 계속해서 추적하도록 한다.
 
-![image](https://user-images.githubusercontent.com/37871541/119675545-19045780-be78-11eb-9591-ec118a6fb493.png)
+# 변경 사항
+1. 실시간 구조 설계
+    Deep sort 알고리즘은 탐지된 물체에 대해 추적만을 진행했기 때문에, 이를 실시간 화면을 기반으로 적용하기 위해서는 추가적인 조치가 필요했다. Opencv와 tensorflow를 기반으로 기존의 Deep sort Repository를 fork하여 실시간으로 영상에 대해 처리가 가능하도록 구조를 변경하였다.
+2. Yolov3 사용 및 Feature Descriptor 변경
+    * Yolov3 사용 : 문제를 종합해본 결과, Detector의 성능이 떨어지는 것이 가장 중요한 문제라고 판단하였다. 이에 Yolov3를 사용하여 얼굴에 국한된 훈련 모델을 제작하였다. 학습 데이터로는 WIDER FACE(A Face Detection Benchmark)를 사용하였다. WIDER FACE 데이터 셋은 얼굴 검출 벤치마크 데이터 셋으로서, 총 32,203개의 이미지를 가지고 있으며, 약 40만개의 얼굴 label로 이루어져 있다. 또한 이 label은 다양한 스케일을 반영하고 있기 때문에, 영상에서 발생하는 다양한 Scale을 반영하기 충분하다고 판단했다.
+    * Arcface를 사용한 Feature Descriptor 변경 : 기존 Deep sort는 보행자를 기반으로 해서, Track matching을 진행했기 때문에, FeatureDescriptor의 Input shape이 2:1 비율로 제작되어 있었다. 하지만 실제로 Face Detection의 결과는 사람의 얼굴이기 때문에 정사각형에 가깝다. 또한 기존의 Feature Descriptor의 경우 보행자 이미지를 기반으로 훈련하여 현재 과업에 맞지 않아 실제 테스트를 진행했을 때, id 매칭에 있어서 실패하는 모습을 보였다. 그렇기 때문에 이 부분을 변경하여 실험을 진행하였다. 
+3.  Face Matching 알고리즘 제작
+    * FACE DB 제작 : 영상속에 등장하는 사람을 인식할 수 있도록 사전에 라벨링된 사람의 이미지를 바탕으로 Feature를 추출하였다. 이 때, Feature 추출기로 얼굴에 최적화된 Arcface 추출기를 사용하였으며, 해당 데이터는 hash 자료형을 기반으로 메모리에 저장되어 있다.
+    ![image](https://user-images.githubusercontent.com/37871541/120924080-dca0e900-c70c-11eb-8df1-e5602ebae036.png)
+    * FACE Matching Algorithm 제작 : 위에서 제작된 Face DB를 바탕으로 런타임에 지속적으로 탐지된 얼굴에 대해 인식을 시도한다. 기존의 Track 객체에는 이전 프레임동안 추적해온 얼굴에 대한 Feature 정보들이 저장되어 있다. 이를 기반으로 Face DB에 있는 사람 얼굴 정보와 Cosine similarity를 통해 가장 작은 값을 해당 Track 객체의 얼굴이라고 판단한다. 이 때, 특정 Threshold(0.68)보다 큰 값일 경우 잘못 탐지했다고 판단하고, id를 배정하지 않는다. 해당 Threshold는 Arcface의 Cosine similarity threshold 실험값을 반영하였다.
+    ![image](https://user-images.githubusercontent.com/37871541/120924132-1a9e0d00-c70d-11eb-8b20-02512f01ef77.png)
 
-![image](https://user-images.githubusercontent.com/37871541/119678550-94670880-be7a-11eb-9c49-7add81dc4a92.png)
 
 
-변경 사항은 다음과 같습니다.
 
-1. Deep sort의 pedestrian appearance extractor를 Arcface를 통한 feature extraction을 통해 얼굴에 최적화된 모델로 변경
-2. 실시간 tracking을 위해 얼굴 탐지 모델을 WIDER FACE 데이터셋을 통해 YOLOv3모델을 학습
-3. 학습된 모델을 통해 얼굴을 탐지하고 기존의 deepsort 를 변경하여 실시간 tracking이 가능하도록 수정
-4. 저장된 사람의 얼굴을 feature extraction하여 face db에 저장
-5. track객체가 생성될 때 해당 db를 근간으로 가장 높은 face id를 매칭 이 때 cosine similarity를 사용한다.
-6. 이미 track이 된 객체에 대해서도 3의 방법을 통해 지속적으로 id를 갱신
-7. track객체에 이전에 탐색된 얼굴 feature정보를 저장하여 인식률을 높힌다.
-8. 이미 face db에서 매칭된 사람의 경우 id가 중복되지 않도록 소스코드 추가
+# Result
 
-## Result
-
-Recall과 precision같은 경우 기존 Tracking 연구보다 높은 수준을 보였으나, MOTA (추적 정확도) 측면에서 나쁜 점수가 나왔습니다. 이는 각각의 프레임에서 추가적인 얼굴 탐지 때문에 잘못된 사람에 대해 id 매칭이 되어 FN가 크게 오르는 결과를 만든 것으로 보입니다. 아래는 [기존 논문](https://sites.google.com/site/shunzhang876/eccv16_facetracking/)의 결과입니다.
+[Tracking Persons-of-Interests via Adaptive Discriminative Features(ECCV 2016](https://sites.google.com/site/shunzhang876/eccv16_facetracking/)에서 제작한 Music Video Dataset을 기반으로 성능 테스트를 진행했다. 제작한 모델은 두 가지 기능이 가능하다. 기존 사람 사진에 대한 정보가 없을 때, 영상을 기반으로 고유한 id를 추출하여 추적을 하는 방법, 그리고 Face DB가 주어졌을 때 이를 매칭한 Face id를 매칭하는 방법이다. 이 두가지 방법을 적용하여 테스트를 진행했다. 아래는 기존 논문의 결과이다.
 
 ![image](https://user-images.githubusercontent.com/37871541/119105685-89663f80-ba58-11eb-89fe-6c29e5f9d4c6.png)
 
 
-해당 논문에서 사용한 music dataset에 대해 제작한 모델의 성능을 검증하였습니다.
+## Face DB없이 고유 ID를 배정한 경우
+|IDF1|IDP|IDR|Rcll|Prcn|FP|FN|IDs|FM|MOTA|MOTP|FAR|
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+|6.9%|6.98%|6.97%|80.7%|80.87%|2421|2261|348|589|57.4%|68.7%|0.34|
 
-### T-ara
+## Face DB를 활용하여 인물을 배정을 우선시 한 경우
+|IDF1|IDP|IDR|Rcll|Prcn|FP|FN|IDs|FM|MOTA|MOTP|FAR|
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+|52.6%|60.1%|51.95%|79.35%|81.84%|2220|2434|201|603|59.01%|67.2%|0.32|
 
-|IDF1|IDP|IDR|Rcll|Prcn|FP|FN|IDs|FM|MOTA|MOTP|FAR|Fn|
-|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-|53.6%|59.0%|49.5%|76.6%|90.4%|1176|3406|3752|517|42.6%|71%|0.241|4710|
+추적의 성능을 나타내는 MOTA와 MOTP가 약 60%의 성능을 달성하는 모습을 보였다. 또한 Face DB에서, 등장하는 인물에 대한 사전 정보를 통해 ID를 추출해본 결과, ID에 관련된 지표(IDF1, IDP, IDR) 역시 좋은 결과를 만들었다. 또한 ids에서 기존 보다 좋은 성능을 가진다. 하지만 MOTA에 있어서 FN, FP가 많아 좋은 성능을 가지지 못했다.
 
-### GirlsAloud
 
-|IDF1|IDP|IDR|Rcll|Prcn|FP|FN|IDs|FM|MOTA|MOTP|FAR|Fn|
-|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-|39.0%|42.6%|36.4%|73.9%|85.3%|2087|4275|4687|1122|32.6%|64.6%|0.314|6630|
+# 결론
 
-### Darling
-
-|IDF1|IDP|IDR|Rcll|Prcn|FP|FN|IDs|FM|MOTA|MOTP|FAR|Fn|
-|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-|3.2%|44.2%|42.6%|79.7%|82.1%|1654|1935|3048|743|30.4%|65.7%|0.267|6180|
-
-### Westlife
-
-|IDF1|IDP|IDR|Rcll|Prcn|FP|FN|IDs|FM|MOTA|MOTP|FAR|Fn|
-|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-|64.3%|61.3%|68.4%|87.8%|77.9%|2828|1389|1809|562|47.0%|64.7%|0.411|6870|
-
-### BrunoMars
-
-|IDF1|IDP|IDR|Rcll|Prcn|FP|FN|IDs|FM|MOTA|MOTP|FAR|Fn|
-|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-|40.5%|40.7%|40.8%|74.1%|73.1%|4560|4330|5128|1010|16.1%|78.9%|0.539|8460|
-
-### HelloBubble
-
-|IDF1|IDP|IDR|Rcll|Prcn|FP|FN|IDs|FM|MOTA|MOTP|FAR|Fn|
-|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-|41.9%|45.3%|39.1%|73.9%|85.2%| 673|1363|1381|301|34.6%|69.7%|0.256|4920|
-
-### Apink
-
-|IDF1|IDP|IDR|Rcll|Prcn|FP|FN|IDs|FM|MOTA|MOTP|FAR|Fn|
-|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-|56.2% | 58.9% | 53.8% |79.5% |86.8% |  883| 1491| 1234 | 337 |50.4% | 66.8% | 0.15 |4650|
+주요 특징은 크게 세 가지로 구분된다. 
+1. 먼저 임의의 사람에 대해 추적이 가능하다. 영상에 몇명의 사람이 존재하는지 모르더라도 등장하는 인물에 대해 고유한 id를 배정할 수 있다. 
+2. 두번째로 가려진 경우에도 적은 ID switching를 가진 상태로 연속적인 추적이 가능하다. 하나의 Track이 얼굴을 탐지한 상태일 때, 이 얼굴이 가려진 경우, 30frame 내에는 해당 Track 객체가 메모리에 존재한 상태로 만들어, 만약 30초 내에 재등장한다면 해당 Track id를 배정함으로써 문제를 어느정도 해결했다. 
+3. 마지막으로 이미 사람에 대한 정보를 가지고 있다면, 이 정보를 바탕으로 해당 사람을 찾아낼 수 있다. 만약 인물 사진을 가지고 있을 경우, 이 정보를 바탕으로 Feature를 생산하고, 가장 유사한 사람과 매칭할 수 있다.
 
 
 
