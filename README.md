@@ -9,9 +9,14 @@ Yolov3와 Arcface 를 통한 얼굴 탐지 및 feature extration을 통해 원�
 # 동작 영상
 
 ![2 (online-video-cutter com) (1)](https://user-images.githubusercontent.com/37871541/119682508-e6f5f400-be7d-11eb-9623-dadf082302e7.gif)
-![myface (online-video-cutter com)](https://user-images.githubusercontent.com/37871541/119682513-e8272100-be7d-11eb-9134-2e86dd10ce36.gif)
+![up_brunoMars](https://user-images.githubusercontent.com/37871541/120925846-753b6700-c715-11eb-8dae-fc7aa3d3aa02.gif)
+![up_Apink](https://user-images.githubusercontent.com/37871541/120925855-7cfb0b80-c715-11eb-8dd8-9e362f638502.gif)
+![up_Westlife](https://user-images.githubusercontent.com/37871541/120925858-81272900-c715-11eb-90b2-bbdc9c511e24.gif)
+![up_HelloBubble](https://user-images.githubusercontent.com/37871541/120925881-9a2fda00-c715-11eb-8531-d62ca32247e9.gif)
+![up_GirlsAloud](https://user-images.githubusercontent.com/37871541/120925884-9c923400-c715-11eb-94cc-1f218ddb2607.gif)
+![up_Darling](https://user-images.githubusercontent.com/37871541/120925887-9f8d2480-c715-11eb-97aa-7af27199651a.gif)
+![up_T-ara](https://user-images.githubusercontent.com/37871541/120925933-c51a2e00-c715-11eb-8219-89d0585b303a.gif)
 
-![BrunoMars (online-video-cutter com) (1) (1)](https://user-images.githubusercontent.com/37871541/119684145-37ba1c80-be7f-11eb-9e6d-c708e96cc737.gif)
 
 # 프로젝트 시작 배경
 
