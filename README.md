@@ -48,9 +48,13 @@ Yolov3와 Arcface 를 통한 얼굴 탐지 및 feature extration을 통해 원�
 
 # Result
 
-[Tracking Persons-of-Interests via Adaptive Discriminative Features(ECCV 2016](https://sites.google.com/site/shunzhang876/eccv16_facetracking/)에서 제작한 Music Video Dataset을 기반으로 성능 테스트를 진행했다. 제작한 모델은 두 가지 기능이 가능하다. 기존 사람 사진에 대한 정보가 없을 때, 영상을 기반으로 고유한 id를 추출하여 추적을 하는 방법, 그리고 Face DB가 주어졌을 때 이를 매칭한 Face id를 매칭하는 방법이다. 이 두가지 방법을 적용하여 테스트를 진행했다. 아래는 기존 논문의 결과이다.
+[Tracking Persons-of-Interests via Adaptive Discriminative Features(ECCV 2016](https://sites.google.com/site/shunzhang876/eccv16_facetracking/)에서 제작한 Music Video Dataset을 기반으로 성능 테스트를 진행했다. 제작한 모델은 두 가지 기능이 가능하다. 기존 사람 사진에 대한 정보가 없을 때, 영상을 기반으로 고유한 id를 추출하여 추적을 하는 방법, 그리고 Face DB가 주어졌을 때 이를 매칭한 Face id를 매칭하는 방법이다. 이 두가지 방법을 적용하여 테스트를 진행했다. 
 
 ![image](https://user-images.githubusercontent.com/37871541/119105685-89663f80-ba58-11eb-89fe-6c29e5f9d4c6.png)
+## 이전 연구 결과
+|IDF1|IDP|IDR|Rcll|Prcn|FP|FN|IDs|FM|MOTA|MOTP|FAR|
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+|-|-|-|70%|89%|-|-|1152|-|61.1%%|65.7%|0.2|
 
 
 ## Face DB없이 고유 ID를 배정한 경우
