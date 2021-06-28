@@ -44,6 +44,90 @@ Yolov3와 Arcface 를 통한 얼굴 탐지 및 feature extration을 통해 원�
     ![image](https://user-images.githubusercontent.com/37871541/120924132-1a9e0d00-c70d-11eb-8b20-02512f01ef77.png)
 
 
+# Matching Algorithm
+
+![Matching algorithm](https://user-images.githubusercontent.com/37871541/123582285-84936900-d818-11eb-8c03-99f9f49cfd0c.jpg)
+
+
+매칭을 하는데 있어서 중요하게 생각한 것은 세가지입니다. 
+
+1. 얼굴의 Feature 정보를 반영할 수 있어야 한다.
+2. 가장 최근에 탐지된 Track 객체부터 배정하도록 한다.
+3. Face DB에 정보가 있다면, 가장 유사한 사람에게 이를 배정한다.
+
+이를 위해서는 Track 객체가 가지는 attibute부터 이해할 필요가 있습니다.
+
+## Track
+
+```
+class Track:
+	track_id : 트랙의 고유한 id
+	max_age : 트랙이 탐지되지 않았을 때, 사라지기까지 대기하는 시간
+	feature : 해당 트랙이 탐지한 얼굴에 대한 Feature를 누적하여 저장하는 배열
+	hits : 트랙이 초기화된 이후로, 실제로 추적가능한 객체임을 판단하기 위해 성공해야하는 횟수의 하한값
+	time_since_update : 측정이 반영된 이후로 부터 현재까지의 프레임 수
+	face_name : Face_db가 있을 경우 배정되는 사람의 이름
+```
+
+Matching cascade와 Face Assignment를 반영하기 위해, Track 객체는 위와 같이 구성되어 있습니다. 이제 아래에 서술한 알고리즘에서 time_since_update를 순차적으로 반영하여 Matching cascade를 사용할 수 있도록 하였습니다. 또한 face_name의 경우 배정되는 얼굴 str를 주기 위해서 추가하였습니다. feature의 경우, 얼굴 특징을 지속적으로 저장할 수 있도록 하기 위해 기존 논문에서 변화를 주었습니다.
+
+아래에서는 위 과업을 달성하기 위해 변경한 두가지 알고리즘, Matching Cascade와 Face Alignment를 설명하겠습니다.
+
+## Matching Cascade
+
+Matching Cascade는 Matching의 정확도를 높히기 위해, 가장 최근에 객체의 업데이트가 이루어진 객체부터 매칭을 순차적으로 시도하는 것입니다. 예를 들어 현재 프레임에 대해 매칭을 수행한다면, 살아있는 객체중, 이전 프레임에서 매칭이 수행된 객체부터 현재 탐지된 물체를 배정하는 것이 보다 옳은 매칭을 가능하게 할 수 있습니다. 이 때, 기존의 논문과는 달리, Arcface를 사용한 Feature를 지속적으로 저장하도록 하여 해당 과업에 맞는 목적을 이룰 수 있도록 하였습니다. 
+
+```python
+for level in range(cascade_depth): # 보통 Track 객체의 max_age만큼
+      if len(unmatched_detections) == 0:  # 모든 detection에 대해 매칭했다면 종료
+          break
+
+      track_indices_l = [ # 현재 level의 객체(즉 가장 최근에 업데이트된 Track 객체)를 가져옴
+          k for k in track_indices
+          if tracks[k].time_since_update == 1 + level
+      ]
+      if len(track_indices_l) == 0: # 현재 level의 객체가 없다면 다음 level 시도
+          continue
+
+			# hungrian 알고리즘을 사용하여 현재 level에서 최적의 Matching 시도
+      matches_l, _, unmatched_detections = \
+          min_cost_matching(
+              distance_metric, max_distance, tracks, detections,
+              track_indices_l, unmatched_detections)
+      matches += matches_l
+  unmatched_tracks = list(set(track_indices) - set(k for k, _ in matches))
+```
+
+해당 알고리즘에서는 Matching cascade를 통하여 모든 Track 객체에 대해 순차적으로 Matching을 시도하여, 매칭된 Track객체를 구합니다. 또한 이러한 Cascade 방법을 사용했음에도 max_threshold를 넘지 못하는 객체의 경우, unmatched_track으로 판정됩니다. 이러한 unmatched_track의 경우, 일반적으로 사용하는 IoU 매칭을 한번에 연산하여 추가적인 가능성을 한번더 줄여주었습니다.
+
+## Face Assignment
+
+이렇게 매칭된 Track들을 계산한 후에는, 해당 Track 객체들이 가진 Feature 정보를 기반으로 Face DB에 있는 인물의 얼굴 Feature와의 비교를 통해 추가적으로 얼굴을 배정해주게 됩니다. 이 때, ResNet50을 백본으로 학습된 Arc_res50의 Pretrained model을 사용하여 Feature를 추출하였습니다.
+
+```python
+face_db[person_name] = dict({"used": False, "db": name_db})
+```
+
+보통의 영상에서 특정 프레임의 사람은 1명만 나오기 때문에, 이러한점을 반영하여 구조를 제작하였습니다. "used"의 변수를 조작하여, 탐지를 했을 때, 가장 높은 유사도를 가지는 사람을 배정하고, 이후에 다른 객체가 같은 사람이라고 판정했을 때, 배정하지 않도록 하였습니다.
+
+```python
+for i in face_db:
+
+for track_idx, detection_idx in matches: # Cascade를 통해 매칭된 Track 객체에 대해
+    self.tracks[track_idx].update( # 먼저 Kalman filter를 통해 다음 위치를 예측함
+        self.kf, detections[detection_idx])
+    
+    if self.tracks[track_idx].get_face_name() == "": # 현재 얼굴을 배정받지 못한 Track 객체라면 배정
+        self.tracks[track_idx].find_face_name(face_db, max_face_threshold)
+
+for track_idx in unmatched_tracks: # 매칭에 실패한 Track 객체에 대해서는 얼굴 배정을 해제한다.
+    self.tracks[track_idx].mark_missed(face_db) 
+for detection_idx in unmatched_detections: # Track 객체를 초기화할 때, 한번 얼굴 배정을 시도한다.
+    self._initiate_track(detections[detection_idx], face_db, max_face_threshold)
+self.tracks = [t for t in self.tracks if not t.is_deleted()]
+```
+
+이미 배정된 사람에 대해 face_name을 변하지 않도록 하여, id switching이 많이 발생하지 않도록 하였습니다. 다만 이렇게 할 경우, 첫 배정때 사람의 이름을 잘못 배정할 경우, 정확도가 떨어질 수 있다는 단점이 존재합니다. 하지만 Track의 경향성을 유지할 수 있기 때문에 이러한 방법을 채택하였습니다.
 
 
 # Result
