@@ -112,19 +112,18 @@ face_db[person_name] = dict({"used": False, "db": name_db})
 
 ```python
 for i in face_db:
+    for track_idx, detection_idx in matches: # Cascade를 통해 매칭된 Track 객체에 대해
+        self.tracks[track_idx].update( # 먼저 Kalman filter를 통해 다음 위치를 예측함
+            self.kf, detections[detection_idx])
+        
+        if self.tracks[track_idx].get_face_name() == "": # 현재 얼굴을 배정받지 못한 Track 객체라면 배정
+            self.tracks[track_idx].find_face_name(face_db, max_face_threshold)
 
-for track_idx, detection_idx in matches: # Cascade를 통해 매칭된 Track 객체에 대해
-    self.tracks[track_idx].update( # 먼저 Kalman filter를 통해 다음 위치를 예측함
-        self.kf, detections[detection_idx])
-    
-    if self.tracks[track_idx].get_face_name() == "": # 현재 얼굴을 배정받지 못한 Track 객체라면 배정
-        self.tracks[track_idx].find_face_name(face_db, max_face_threshold)
-
-for track_idx in unmatched_tracks: # 매칭에 실패한 Track 객체에 대해서는 얼굴 배정을 해제한다.
-    self.tracks[track_idx].mark_missed(face_db) 
-for detection_idx in unmatched_detections: # Track 객체를 초기화할 때, 한번 얼굴 배정을 시도한다.
-    self._initiate_track(detections[detection_idx], face_db, max_face_threshold)
-self.tracks = [t for t in self.tracks if not t.is_deleted()]
+    for track_idx in unmatched_tracks: # 매칭에 실패한 Track 객체에 대해서는 얼굴 배정을 해제한다.
+        self.tracks[track_idx].mark_missed(face_db) 
+    for detection_idx in unmatched_detections: # Track 객체를 초기화할 때, 한번 얼굴 배정을 시도한다.
+        self._initiate_track(detections[detection_idx], face_db, max_face_threshold)
+    self.tracks = [t for t in self.tracks if not t.is_deleted()]
 ```
 
 이미 배정된 사람에 대해 face_name을 변하지 않도록 하여, id switching이 많이 발생하지 않도록 하였습니다. 다만 이렇게 할 경우, 첫 배정때 사람의 이름을 잘못 배정할 경우, 정확도가 떨어질 수 있다는 단점이 존재합니다. 하지만 Track의 경향성을 유지할 수 있기 때문에 이러한 방법을 채택하였습니다.
