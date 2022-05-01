@@ -1,3 +1,8 @@
+# Description
+
+- [개선된 DeepSORT를 이용한 실시간 다중 얼굴 추적](https://www.dbpia.co.kr/journal/articleDetail?nodeId=NODE11036064) (한국정보과학회)
+
+DeepSort 알고리즘을 개선하여 여러 사람이 등장하는 동영상에서 얼굴을 추적하는 기능을 제작하였습니다.
 
 # Introduction
 
